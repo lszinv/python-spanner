@@ -28,7 +28,6 @@ from .constants import (
     METRIC_LABEL_KEY_CLIENT_UID,
     METRIC_LABEL_KEY_DATABASE,
     METRIC_LABEL_KEY_DIRECT_PATH_ENABLED,
-    METRIC_LABEL_KEY_DIRECT_PATH_USED,
     METRIC_LABEL_KEY_METHOD,
     METRIC_LABEL_KEY_STATUS,
     MONITORED_RES_LABEL_KEY_CLIENT_HASH,
@@ -398,7 +397,6 @@ class MetricsTracer:
 
         self._client_attributes[METRIC_LABEL_KEY_STATUS] = self.current_op.status
         return self._client_attributes
-
 
     def _create_attempt_otel_attributes(self) -> dict:
         """

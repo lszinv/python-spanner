@@ -100,8 +100,9 @@ def test_disabled(metrics_tracer):
     assert metrics_tracer.instrument_attempt_counter.add.call_count == 0
     assert metrics_tracer.instrument_operation_latency.record.call_count == 0
     assert metrics_tracer.instrument_operation_counter.add.call_count == 0
-    assert not metrics_tracer._create_operation_otel_attributes() 
-    assert not metrics_tracer._create_attempt_otel_attributes() 
+    assert not metrics_tracer._create_operation_otel_attributes()
+    assert not metrics_tracer._create_attempt_otel_attributes()
+
 
 def test_get_ms_time_diff():
     # Create two datetime objects
@@ -212,6 +213,7 @@ def test_enable_direct_path(metrics_tracer):
     # Ensure it does not overwrite
     metrics_tracer.enable_direct_path(False)
     assert metrics_tracer.client_attributes["directpath_enabled"] == "True"
+
 
 def test_set_method(metrics_tracer):
     metrics_tracer.set_method("test_method")

@@ -34,6 +34,7 @@ from google.cloud.spanner_v1.types import transaction
 from google.protobuf import empty_pb2  # type: ignore
 from .base import SpannerTransport, DEFAULT_CLIENT_INFO
 from .grpc import SpannerGrpcTransport
+from google.cloud.spanner_v1.metrics.metrics_interceptor import MetricsInterceptor
 
 
 class SpannerGrpcAsyncIOTransport(SpannerTransport):
@@ -113,6 +114,7 @@ class SpannerGrpcAsyncIOTransport(SpannerTransport):
         client_info: gapic_v1.client_info.ClientInfo = DEFAULT_CLIENT_INFO,
         always_use_jwt_access: Optional[bool] = False,
         api_audience: Optional[str] = None,
+        metrics_interceptor: Optional[MetricsInterceptor] = None,
     ) -> None:
         """Instantiate the transport.
 
