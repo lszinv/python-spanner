@@ -19,6 +19,7 @@ from .constants import (
     GOOGLE_CLOUD_RESOURCE_KEY,
     SPANNER_METHOD_PREFIX,
 )
+
 from typing import Dict
 from .spanner_metrics_tracer_factory import SpannerMetricsTracerFactory
 import re
@@ -142,4 +143,10 @@ class MetricsInterceptor(ClientInterceptor):
         response = invoked_method(request_or_iterator, call_details)
         SpannerMetricsTracerFactory.current_metrics_tracer.record_attempt_completion()
 
+        # Process and send GFE metrics if enabled
+        if SpannerMetricsTracerFactory.metrics_gfe_tracer.enabled:
+            metadata = response.initial_metadata()
+            SpannerMetricsTracerFactory.metrics_gfe_tracer.record_gfe_metrics(metadata)
+        else:
+            print("disabled")
         return response
