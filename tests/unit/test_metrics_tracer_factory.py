@@ -49,10 +49,8 @@ def test_initialization(metrics_tracer_factory):
 
 
 def test_create_metrics_tracer(metrics_tracer_factory):
-    tracer = metrics_tracer_factory.create_metrics_tracer("test_method")
+    tracer = metrics_tracer_factory.create_metrics_tracer()
     assert isinstance(tracer, MetricsTracer)
-    assert tracer.method == "test_method"
-    assert tracer.enabled is True
 
 
 def test_client_attributes(metrics_tracer_factory):

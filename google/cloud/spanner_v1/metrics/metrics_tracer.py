@@ -89,28 +89,23 @@ class MetricOpTracer:
     _start_time: datetime
     _current_attempt: MetricAttemptTracer
     status: str
-    direct_path_enabled: bool
 
     def __init__(self, is_direct_path_enabled: bool = False):
         """
         Initialize a MetricOpTracer instance with the given parameters.
 
-        This constructor sets up a MetricOpTracer instance with the provided metric name, instrumentations for attempt latency,
-        attempt counter, operation latency, operation counter, and a flag indicating whether the direct path is enabled.
-        It initializes the method name, start time, attempt count, current attempt, direct path enabled status, and status of the metric operation.
+        This constructor sets up a MetricOpTracer instance with the provided instrumentations for attempt latency,
+        attempt counter, operation latency and operation counter.
 
         Args:
-            metric_name (str): The name of the metric operation.
             instrument_attempt_latency (Histogram): The instrumentation for measuring attempt latency.
             instrument_attempt_counter (Counter): The instrumentation for counting attempts.
             instrument_operation_latency (Histogram): The instrumentation for measuring operation latency.
             instrument_operation_counter (Counter): The instrumentation for counting operations.
-            is_direct_path_enabled (bool, optional): A flag indicating whether the direct path is enabled. Defaults to False.
         """
         self._attempt_count = 0
         self._start_time = datetime.now()
         self._current_attempt = None
-        self.direct_path_enabled = is_direct_path_enabled
         self.status = ""
 
     @property
@@ -159,7 +154,7 @@ class MetricOpTracer:
 
     def start(self):
         """
-        Sets the start time of the metric operation to the current time.
+        Set the start time of the metric operation to the current time.
 
         This method updates the start time of the metric operation to the current time, indicating the operation has started.
         """
@@ -167,7 +162,7 @@ class MetricOpTracer:
 
     def new_attempt(self):
         """
-        Initializes a new MetricAttemptTracer instance for the current metric operation.
+        Initialize a new MetricAttemptTracer instance for the current metric operation.
 
         This method sets up a new MetricAttemptTracer instance, indicating a new attempt is being made within the metric operation.
         """
@@ -193,9 +188,7 @@ class MetricsTracer:
 
     def __init__(
         self,
-        method: str,
         enabled: bool,
-        is_direct_path_enabled: bool,
         instrument_attempt_latency: Histogram,
         instrument_attempt_counter: Counter,
         instrument_operation_latency: Histogram,
@@ -210,17 +203,14 @@ class MetricsTracer:
         It sets up the necessary metrics tracing infrastructure for recording metrics related to RPC operations.
 
         Args:
-            method (str): The name of the method for which metrics are being traced.
             enabled (bool): A flag indicating if metrics tracing is enabled.
-            is_direct_path_enabled (bool): A flag indicating if the direct path is enabled for metrics tracing.
             instrument_attempt_latency (Histogram): The instrument for measuring attempt latency.
             instrument_attempt_counter (Counter): The instrument for counting attempts.
             instrument_operation_latency (Histogram): The instrument for measuring operation latency.
             instrument_operation_counter (Counter): The instrument for counting operations.
             client_attributes (dict[str, str]): A dictionary of client attributes used for metrics tracing.
         """
-        self.method = method
-        self.current_op = MetricOpTracer(is_direct_path_enabled=is_direct_path_enabled)
+        self.current_op = MetricOpTracer()
         self._client_attributes = client_attributes
         self._instrument_attempt_latency = instrument_attempt_latency
         self._instrument_attempt_counter = instrument_attempt_counter
@@ -396,63 +386,31 @@ class MetricsTracer:
             self.current_op.attempt_count, attributes=attempt_attributes
         )
 
-    def _create_otel_attributes(self) -> Dict[str, str]:
+    def _create_operation_otel_attributes(self) -> dict:
         """
-        Create a dictionary of attributes for OpenTelemetry metrics tracing.
+        Create additional attributes for operation metrics tracing.
 
-        This method initializes a copy of the client attributes and adds specific operation attributes
-        such as the method name, direct path enabled status, and direct path used status.
-        These attributes are used to provide context to the metrics being traced.
-        If metrics tracing is not enabled, this method does not perform any operations.
-        Returns:
-            dict[str, str]: A dictionary of attributes for OpenTelemetry metrics tracing.
+        This method populates the client attributes dictionary with the operation status if metrics tracing is enabled.
+        It returns the updated client attributes dictionary.
         """
         if not self.enabled:
-            return
+            return {}
 
-        self.client_attributes[METRIC_LABEL_KEY_METHOD] = self.method
-        self.client_attributes[METRIC_LABEL_KEY_DIRECT_PATH_ENABLED] = str(
-            self.current_op.direct_path_enabled
-        )
-        if self.current_op.current_attempt is not None:
-            self.client_attributes[METRIC_LABEL_KEY_DIRECT_PATH_USED] = str(
-                self.current_op.current_attempt.direct_path_used
-            )
+        self._client_attributes[METRIC_LABEL_KEY_STATUS] = self.current_op.status
+        return self._client_attributes
 
-        return self.client_attributes
 
-    def _create_operation_otel_attributes(self) -> Dict[str, str]:
+    def _create_attempt_otel_attributes(self) -> dict:
         """
-        Create a dictionary of attributes specific to an operation for OpenTelemetry metrics tracing.
+        Create additional attributes for attempt metrics tracing.
 
-        This method builds upon the base attributes created by `_create_otel_attributes` and adds the operation status.
-        These attributes are used to provide context to the metrics being traced for a specific operation.
-        If metrics tracing is not enabled, this method does not perform any operations.
-
-        Returns:
-            dict[str, str]: A dictionary of attributes specific to an operation for OpenTelemetry metrics tracing.
+        This method populates the attributes dictionary with the attempt status if metrics tracing is enabled and an attempt exists.
+        It returns the updated attributes dictionary.
         """
         if not self.enabled:
-            return
+            return {}
 
-        attributes = self._create_otel_attributes()
-        attributes[METRIC_LABEL_KEY_STATUS] = self.current_op.status
-        return attributes
-
-    def _create_attempt_otel_attributes(self) -> Dict[str, str]:
-        """
-        Create a dictionary of attributes specific to an attempt within an operation for OpenTelemetry metrics tracing.
-
-        This method builds upon the operation attributes created by `_create_operation_otel_attributes` and adds the attempt status.
-        These attributes are used to provide context to the metrics being traced for a specific attempt within an operation.
-        If metrics tracing is not enabled, this method does not perform any operations.
-        Returns:
-            dict[str, str]: A dictionary of attributes specific to an attempt within an operation for OpenTelemetry metrics tracing.
-        """
-        if not self.enabled:
-            return
-
-        attributes = self._create_operation_otel_attributes()
+        attributes = {}
         # Short circuit out if we don't have an attempt
         if self.current_op.current_attempt is not None:
             attributes[METRIC_LABEL_KEY_STATUS] = self.current_op.current_attempt.status
@@ -571,6 +529,20 @@ class MetricsTracer:
         """
         if METRIC_LABEL_KEY_DATABASE not in self._client_attributes:
             self._client_attributes[METRIC_LABEL_KEY_DATABASE] = database
+        return self
+
+    def set_method(self, method: str) -> "MetricsTracer":
+        """
+        Set the method attribute for metrics tracing.
+
+        This method updates the method attribute in the client attributes dictionary for metrics tracing purposes.
+        If the database attribute already has a value, this method does nothing and returns.
+
+        :param method: The method name to set.
+        :return: This instance of MetricsTracer for method chaining.
+        """
+        if METRIC_LABEL_KEY_METHOD not in self._client_attributes:
+            self.client_attributes[METRIC_LABEL_KEY_METHOD] = method
         return self
 
     def enable_direct_path(self, enable: bool = False) -> "MetricsTracer":

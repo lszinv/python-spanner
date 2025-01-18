@@ -240,30 +240,24 @@ class MetricsTracerFactory:
         self._client_attributes[METRIC_LABEL_KEY_DIRECT_PATH_ENABLED] = enable
         return self
 
-    def create_metrics_tracer(
-        self, method: str, is_direct_path_enabled: bool = False
-    ) -> MetricsTracer:
-        """Create and return a MetricsTracer instance with default settings and client attributes.
+    def create_metrics_tracer(self) -> MetricsTracer:
+        """
+        Create and return a MetricsTracer instance with default settings and client attributes.
 
         This method initializes a MetricsTracer instance with default settings for metrics tracing,
-        with disabled metrics tracing and no direct path enabled by default.
+        including metrics tracing enabled if OpenTelemetry is installed and the direct path disabled by default.
         It also sets the client attributes based on the factory's configuration.
-
-        Args:
-            method (str): The name of the method for which metrics are being traced.
 
         Returns:
             MetricsTracer: A MetricsTracer instance with default settings and client attributes.
         """
         metrics_tracer = MetricsTracer(
             enabled=self.enabled and HAS_OPENTELEMETRY_INSTALLED,
-            method=method,
-            is_direct_path_enabled=is_direct_path_enabled,
-            instrument_attempt_latency=self.instrument_attempt_latency,
-            instrument_attempt_counter=self.instrument_attempt_counter,
-            instrument_operation_latency=self.instrument_operation_latency,
-            instrument_operation_counter=self.instrument_operation_counter,
-            client_attributes=self.client_attributes.copy(),
+            instrument_attempt_latency=self._instrument_attempt_latency,
+            instrument_attempt_counter=self._instrument_attempt_counter,
+            instrument_operation_latency=self._instrument_operation_latency,
+            instrument_operation_counter=self._instrument_operation_counter,
+            client_attributes=self._client_attributes.copy(),
         )
         return metrics_tracer
 

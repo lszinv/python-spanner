@@ -30,20 +30,13 @@ def metrics_tracer():
     mock_operation_counter = mock.create_autospec(Counter, instance=True)
     mock_operation_latency = mock.create_autospec(Histogram, instance=True)
     return MetricsTracer(
-        method="test_method",
         enabled=True,
-        is_direct_path_enabled=False,
         instrument_attempt_latency=mock_attempt_latency,
         instrument_attempt_counter=mock_attempt_counter,
         instrument_operation_latency=mock_operation_latency,
         instrument_operation_counter=mock_operation_counter,
         client_attributes={"project_id": "test_project"},
     )
-
-
-def test_initialization(metrics_tracer):
-    assert metrics_tracer.method == "test_method"
-    assert metrics_tracer.enabled is True
 
 
 def test_record_attempt_start(metrics_tracer):
@@ -107,11 +100,8 @@ def test_disabled(metrics_tracer):
     assert metrics_tracer.instrument_attempt_counter.add.call_count == 0
     assert metrics_tracer.instrument_operation_latency.record.call_count == 0
     assert metrics_tracer.instrument_operation_counter.add.call_count == 0
-
-    assert metrics_tracer._create_otel_attributes() is None
-    assert metrics_tracer._create_operation_otel_attributes() is None
-    assert metrics_tracer._create_attempt_otel_attributes() is None
-
+    assert not metrics_tracer._create_operation_otel_attributes() 
+    assert not metrics_tracer._create_attempt_otel_attributes() 
 
 def test_get_ms_time_diff():
     # Create two datetime objects
@@ -144,7 +134,7 @@ def test_get_ms_time_diff_negative():
 
 
 def test_set_project(metrics_tracer):
-    # Set from fixture
+    metrics_tracer.set_project("test_project")
     assert metrics_tracer.client_attributes["project_id"] == "test_project"
 
     # Ensure it does not overwrite
@@ -222,3 +212,11 @@ def test_enable_direct_path(metrics_tracer):
     # Ensure it does not overwrite
     metrics_tracer.enable_direct_path(False)
     assert metrics_tracer.client_attributes["directpath_enabled"] == "True"
+
+def test_set_method(metrics_tracer):
+    metrics_tracer.set_method("test_method")
+    assert metrics_tracer.client_attributes["method"] == "test_method"
+
+    # Ensure it does not overwrite
+    metrics_tracer.set_method("new_method")
+    assert metrics_tracer.client_attributes["method"] == "test_method"
