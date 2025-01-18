@@ -98,7 +98,8 @@ class MetricsTracerFactory:
         """Set the project attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided project name.
-        The project name is used to identify the project for which metrics are being traced.
+        The project name is used to identify the project for which metrics are being traced
+        and is passed to the created MetricsTracer.
 
         Args:
             project (str): The name of the project for metrics tracing.
@@ -113,7 +114,8 @@ class MetricsTracerFactory:
         """Set the instance attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided instance name.
-        The instance name is used to identify the instance for which metrics are being traced.
+        The instance name is used to identify the instance for which metrics are being traced
+        and is passed to the created MetricsTracer.
 
         Args:
             instance (str): The name of the instance for metrics tracing.
@@ -128,7 +130,8 @@ class MetricsTracerFactory:
         """Sets the instance configuration attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided instance configuration.
-        The instance configuration is used to identify the configuration of the instance for which metrics are being traced.
+        The instance configuration is used to identify the configuration of the instance for which
+        metrics are being traced and is passed to the created MetricsTracer.
 
         Args:
             instance_config (str): The configuration of the instance for metrics tracing.
@@ -145,7 +148,8 @@ class MetricsTracerFactory:
         """Set the location attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided location.
-        The location is used to identify the location for which metrics are being traced.
+        The location is used to identify the location for which metrics are being traced
+        and is passed to the created MetricsTracer.
 
         Args:
             location (str): The location for metrics tracing.
@@ -160,7 +164,8 @@ class MetricsTracerFactory:
         """Set the client hash attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided client hash.
-        The client hash is used to identify the client for which metrics are being traced.
+        The client hash is used to identify the client for which metrics are being traced
+        and is passed to the created MetricsTracer.
 
         Args:
             hash (str): The hash of the client for metrics tracing.
@@ -175,7 +180,8 @@ class MetricsTracerFactory:
         """Set the client UID attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided client UID.
-        The client UID is used to identify the client for which metrics are being traced.
+        The client UID is used to identify the client for which metrics are being traced
+        and is passed to the created MetricsTracer.
 
         Args:
             client_uid (str): The UID of the client for metrics tracing.
@@ -190,7 +196,8 @@ class MetricsTracerFactory:
         """Set the client name attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided client name.
-        The client name is used to identify the client for which metrics are being traced.
+        The client name is used to identify the client for which metrics are being traced
+        and is passed to the created MetricsTracer.
 
         Args:
             client_name (str): The name of the client for metrics tracing.
@@ -205,7 +212,8 @@ class MetricsTracerFactory:
         """Set the database attribute for metrics tracing.
 
         This method updates the client attributes dictionary with the provided database name.
-        The database name is used to identify the database for which metrics are being traced.
+        The database name is used to identify the database for which metrics are being traced
+        and is passed to the created MetricsTracer.
 
         Args:
             database (str): The name of the database for metrics tracing.
@@ -220,7 +228,8 @@ class MetricsTracerFactory:
         """Enable or disable the direct path for metrics tracing.
 
         This method updates the client attributes dictionary with the provided enable status.
-        The direct path enabled status is used to determine whether to use the direct path for metrics tracing.
+        The direct path enabled status is used to determine whether to use the direct path for metrics tracing
+        and is passed to the created MetricsTracer.
 
         Args:
             enable (bool, optional): Whether to enable the direct path for metrics tracing. Defaults to False.
@@ -254,7 +263,7 @@ class MetricsTracerFactory:
             instrument_attempt_counter=self.instrument_attempt_counter,
             instrument_operation_latency=self.instrument_operation_latency,
             instrument_operation_counter=self.instrument_operation_counter,
-            client_attributes=self.client_attributes,
+            client_attributes=self.client_attributes.copy(),
         )
         return metrics_tracer
 
