@@ -1,13 +1,16 @@
 import pytest
 from unittest import mock
 from google.cloud.spanner_v1.metrics.metrics_capture import MetricsCapture
-from google.cloud.spanner_v1.metrics.spanner_metrics_tracer_factory import SpannerMetricsTracerFactory
 from google.cloud.spanner_v1.metrics.metrics_tracer_factory import MetricsTracerFactory
+
 
 @pytest.fixture
 def mock_tracer_factory():
-    with mock.patch.object(MetricsTracerFactory, 'create_metrics_tracer') as mock_create:
+    with mock.patch.object(
+        MetricsTracerFactory, "create_metrics_tracer"
+    ) as mock_create:
         yield mock_create
+
 
 def test_metrics_capture_enter(mock_tracer_factory):
     mock_tracer = mock.Mock()
@@ -17,6 +20,7 @@ def test_metrics_capture_enter(mock_tracer_factory):
         assert capture is not None
         mock_tracer_factory.assert_called_once()
         mock_tracer.record_operation_start.assert_called_once()
+
 
 def test_metrics_capture_exit(mock_tracer_factory):
     mock_tracer = mock.Mock()

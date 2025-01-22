@@ -219,7 +219,10 @@ class Client(ClientWithProject):
             warnings.warn(_EMULATOR_HOST_HTTP_SCHEME)
 
         # Check flag to enable Spanner builtin metrics
-        if _get_spanner_enable_builtin_metrics() and HAS_GOOGLE_CLOUD_MONITORING_INSTALLED:
+        if (
+            _get_spanner_enable_builtin_metrics()
+            and HAS_GOOGLE_CLOUD_MONITORING_INSTALLED
+        ):
             meter_provider = metrics.NoOpMeterProvider()
             if not _get_spanner_emulator_host():
                 meter_provider = MeterProvider(

@@ -29,6 +29,7 @@ try:
         GoogleCloudResourceDetector,
     )
     import mmh3
+
     HAS_OPENTELEMETRY_INSTALLED = True
 except ImportError:  # pragma: NO COVER
     HAS_OPENTELEMETRY_INSTALLED = False

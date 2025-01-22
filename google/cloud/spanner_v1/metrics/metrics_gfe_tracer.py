@@ -26,11 +26,12 @@ from google.cloud.spanner_v1.metrics.constants import (
     BUILT_IN_METRICS_METER_NAME,
     SPANNER_SERVICE_NAME,
     METRIC_NAME_GFE_LATENCY,
-    METRIC_NAME_GFE_MISSING_HEADER_COUNT
+    METRIC_NAME_GFE_MISSING_HEADER_COUNT,
 )
 from google.cloud.spanner_v1 import __version__
 
-class MetricsGfeTracer():
+
+class MetricsGfeTracer:
     _instrument_gfe_latency: Histogram
     _instrument_gfe_missing_header_count: Counter
     enabled = False
@@ -42,18 +43,21 @@ class MetricsGfeTracer():
         if not self.enabled:
             return
 
-        gfe_headers = [header.value for header in metadata if header.key == 'server-timing' and header.value.startswith("gfe")]
+        gfe_headers = [
+            header.value
+            for header in metadata
+            if header.key == "server-timing" and header.value.startswith("gfe")
+        ]
 
         if len(gfe_headers) == 0:
             self.record_gfe_missing_header_count()
             return
 
         for gfe_header in gfe_headers:
-            match = re.search(r'dur=(\d+)', gfe_header)
+            match = re.search(r"dur=(\d+)", gfe_header)
             if match:
                 duration = int(match.group(1))
                 self.record_gfe_latency(duration)
-
 
     def record_gfe_latency(self, latency: int) -> None:
         print("real called")
@@ -74,11 +78,10 @@ class MetricsGfeTracer():
         self._instrument_gfe_latency = meter.create_histogram(
             name=f"{SPANNER_SERVICE_NAME}/{METRIC_NAME_GFE_LATENCY}",
             unit="ms",
-            description="GFE Latency."
+            description="GFE Latency.",
         )
         self._instrument_gfe_missing_header_count = meter.create_counter(
             name=f"{SPANNER_SERVICE_NAME}/{METRIC_NAME_GFE_MISSING_HEADER_COUNT}",
             unit="1",
-            description="GFE missing header count."
-            
-        ) 
+            description="GFE missing header count.",
+        )
