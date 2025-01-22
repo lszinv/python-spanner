@@ -177,10 +177,10 @@ class MetricsTracer:
     """
 
     _client_attributes: Dict[str, str]
-    _instrument_attempt_counter: Counter
-    _instrument_attempt_latency: Histogram
-    _instrument_operation_counter: Counter
-    _instrument_operation_latency: Histogram
+    _instrument_attempt_counter: "Counter"
+    _instrument_attempt_latency: "Histogram"
+    _instrument_operation_counter: "Counter"
+    _instrument_operation_latency: "Histogram"
     current_op: MetricOpTracer
     enabled: bool
     method: str
@@ -188,10 +188,10 @@ class MetricsTracer:
     def __init__(
         self,
         enabled: bool,
-        instrument_attempt_latency: Histogram,
-        instrument_attempt_counter: Counter,
-        instrument_operation_latency: Histogram,
-        instrument_operation_counter: Counter,
+        instrument_attempt_latency: "Histogram",
+        instrument_attempt_counter: "Counter",
+        instrument_operation_latency: "Histogram",
+        instrument_operation_counter: "Counter",
         client_attributes: Dict[str, str],
     ):
         """
