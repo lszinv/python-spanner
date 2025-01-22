@@ -251,7 +251,7 @@ class MetricsTracer:
         return self._client_attributes
 
     @property
-    def instrument_attempt_counter(self) -> Counter:
+    def instrument_attempt_counter(self) -> "Counter":
         """
         Return the instrument for counting attempts.
 
@@ -264,7 +264,7 @@ class MetricsTracer:
         return self._instrument_attempt_counter
 
     @property
-    def instrument_attempt_latency(self) -> Histogram:
+    def instrument_attempt_latency(self) -> "Histogram":
         """
         Return the instrument for measuring attempt latency.
 
@@ -277,7 +277,7 @@ class MetricsTracer:
         return self._instrument_attempt_latency
 
     @property
-    def instrument_operation_counter(self) -> Counter:
+    def instrument_operation_counter(self) -> "Counter":
         """
         Return the instrument for counting operations.
 
@@ -290,7 +290,7 @@ class MetricsTracer:
         return self._instrument_operation_counter
 
     @property
-    def instrument_operation_latency(self) -> Histogram:
+    def instrument_operation_latency(self) -> "Histogram":
         """
         Return the instrument for measuring operation latency.
 

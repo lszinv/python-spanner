@@ -23,12 +23,18 @@ from .constants import (
     GOOGLE_CLOUD_REGION_KEY,
     GOOGLE_CLOUD_REGION_GLOBAL,
 )
-from opentelemetry.resourcedetector.gcp_resource_detector import (
-    GoogleCloudResourceDetector,
-)
+
+try:
+    from opentelemetry.resourcedetector.gcp_resource_detector import (
+        GoogleCloudResourceDetector,
+    )
+    import mmh3
+    HAS_OPENTELEMETRY_INSTALLED = True
+except ImportError:  # pragma: NO COVER
+    HAS_OPENTELEMETRY_INSTALLED = False
+
 from .metrics_tracer import MetricsTracer
 from google.cloud.spanner_v1 import __version__
-import mmh3
 from uuid import uuid4
 
 
@@ -105,6 +111,8 @@ class SpannerMetricsTracerFactory(MetricsTracerFactory):
     @staticmethod
     def _get_location() -> str:
         """Get the location of the resource."""
+        if not HAS_OPENTELEMETRY_INSTALLED:
+            return GOOGLE_CLOUD_REGION_GLOBAL
         detector = GoogleCloudResourceDetector()
         resources = detector.detect()
         if GOOGLE_CLOUD_REGION_KEY not in resources.attributes:
