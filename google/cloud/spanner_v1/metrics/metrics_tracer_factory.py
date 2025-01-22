@@ -18,7 +18,11 @@
 from google.cloud.spanner_v1.metrics.metrics_tracer import MetricsTracer
 
 from google.cloud.spanner_v1.metrics.constants import (
+    METRIC_NAME_OPERATION_LATENCIES,
     MONITORED_RES_LABEL_KEY_PROJECT,
+    METRIC_NAME_ATTEMPT_LATENCIES,
+    METRIC_NAME_OPERATION_COUNT,
+    METRIC_NAME_ATTEMPT_COUNT,
     MONITORED_RES_LABEL_KEY_INSTANCE,
     MONITORED_RES_LABEL_KEY_INSTANCE_CONFIG,
     MONITORED_RES_LABEL_KEY_LOCATION,
@@ -281,25 +285,25 @@ class MetricsTracerFactory:
         )
 
         self._instrument_attempt_latency = meter.create_histogram(
-            name=f"{service_name}/attempt_latency",
+            name=METRIC_NAME_ATTEMPT_LATENCIES,
             unit="ms",
             description="Time an individual attempt took.",
         )
 
         self._instrument_attempt_counter = meter.create_counter(
-            name=f"{service_name}/attempt_count",
+            name=METRIC_NAME_ATTEMPT_COUNT,
             unit="1",
             description="Number of attempts.",
         )
 
         self._instrument_operation_latency = meter.create_histogram(
-            name=f"{service_name}/operation_latency",
+            name=METRIC_NAME_OPERATION_LATENCIES,
             unit="ms",
             description="Total time until final operation success or failure, including retries and backoff.",
         )
 
         self._instrument_operation_counter = meter.create_counter(
-            name=f"{service_name}/operation_count",
+            name=METRIC_NAME_OPERATION_COUNT,
             unit="1",
             description="Number of operations.",
         )
