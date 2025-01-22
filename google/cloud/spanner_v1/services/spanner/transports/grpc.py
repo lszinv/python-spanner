@@ -30,7 +30,6 @@ from google.cloud.spanner_v1.types import spanner
 from google.cloud.spanner_v1.types import transaction
 
 from google.cloud.spanner_v1.metrics.metrics_interceptor import MetricsInterceptor
-from google.cloud.spanner_v1.metrics.constants import ENABLE_SPANNER_METRICS_ENV_VAR
 from google.protobuf import empty_pb2  # type: ignore
 from .base import SpannerTransport, DEFAULT_CLIENT_INFO
 

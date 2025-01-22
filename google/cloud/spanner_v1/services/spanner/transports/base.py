@@ -30,8 +30,8 @@ from google.cloud.spanner_v1.types import commit_response
 from google.cloud.spanner_v1.types import result_set
 from google.cloud.spanner_v1.types import spanner
 from google.cloud.spanner_v1.types import transaction
-from google.protobuf import empty_pb2  # type: ignore
 from google.cloud.spanner_v1.metrics.metrics_interceptor import MetricsInterceptor
+from google.protobuf import empty_pb2  # type: ignore
 
 DEFAULT_CLIENT_INFO = gapic_v1.client_info.ClientInfo(
     gapic_version=package_version.__version__

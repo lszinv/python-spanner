@@ -1,6 +1,8 @@
 import pytest
 from google.cloud.spanner_v1.metrics.metrics_interceptor import MetricsInterceptor
-from google.cloud.spanner_v1.metrics.spanner_metrics_tracer_factory import SpannerMetricsTracerFactory
+from google.cloud.spanner_v1.metrics.spanner_metrics_tracer_factory import (
+    SpannerMetricsTracerFactory,
+)
 from unittest.mock import MagicMock
 
 
@@ -65,8 +67,12 @@ def test_intercept_without_tracer(interceptor):
 
 def test_intercept_with_tracer(interceptor):
     SpannerMetricsTracerFactory.current_metrics_tracer = MockMetricTracer()
-    SpannerMetricsTracerFactory.current_metrics_tracer.record_attempt_start = MagicMock()
-    SpannerMetricsTracerFactory.current_metrics_tracer.record_attempt_completion = MagicMock()
+    SpannerMetricsTracerFactory.current_metrics_tracer.record_attempt_start = (
+        MagicMock()
+    )
+    SpannerMetricsTracerFactory.current_metrics_tracer.record_attempt_completion = (
+        MagicMock()
+    )
 
     mock_invoked_method = MagicMock(return_value="response")
     call_details = MagicMock(

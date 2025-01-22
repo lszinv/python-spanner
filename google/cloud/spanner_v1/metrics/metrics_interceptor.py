@@ -1,11 +1,24 @@
-﻿"""Interceptor for collecting Cloud Spanner metrics."""
+﻿# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Interceptor for collecting Cloud Spanner metrics."""
 
 from grpc_interceptor import ClientInterceptor
 from .constants import (
     GOOGLE_CLOUD_RESOURCE_KEY,
     SPANNER_METHOD_PREFIX,
 )
-from .metrics_tracer import MetricsTracer
 from typing import Dict
 from .spanner_metrics_tracer_factory import SpannerMetricsTracerFactory
 import re
@@ -88,11 +101,17 @@ class MetricsInterceptor(ClientInterceptor):
 
         if resources:
             if "project" in resources:
-                SpannerMetricsTracerFactory.current_metrics_tracer.set_project(resources["project"])
+                SpannerMetricsTracerFactory.current_metrics_tracer.set_project(
+                    resources["project"]
+                )
             if "instance" in resources:
-                SpannerMetricsTracerFactory.current_metrics_tracer.set_instance(resources["instance"])
+                SpannerMetricsTracerFactory.current_metrics_tracer.set_instance(
+                    resources["instance"]
+                )
             if "database" in resources:
-                SpannerMetricsTracerFactory.current_metrics_tracer.set_database(resources["database"])
+                SpannerMetricsTracerFactory.current_metrics_tracer.set_database(
+                    resources["database"]
+                )
 
     def intercept(self, invoked_method, request_or_iterator, call_details):
         """Intercept gRPC calls to collect metrics.
@@ -112,6 +131,7 @@ class MetricsInterceptor(ClientInterceptor):
         ## Extract  Project / Instance / Databse from header information
         resources = self._extract_resource_from_path(call_details.metadata)
         self._set_metrics_tracer_attributes(resources)
+
         ## Format method to be be spanner.<method name>
         method_name = self._remove_prefix(
             call_details.method, SPANNER_METHOD_PREFIX

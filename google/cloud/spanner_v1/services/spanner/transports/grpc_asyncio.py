@@ -31,10 +31,10 @@ from google.cloud.spanner_v1.types import commit_response
 from google.cloud.spanner_v1.types import result_set
 from google.cloud.spanner_v1.types import spanner
 from google.cloud.spanner_v1.types import transaction
+from google.cloud.spanner_v1.metrics.metrics_interceptor import MetricsInterceptor
 from google.protobuf import empty_pb2  # type: ignore
 from .base import SpannerTransport, DEFAULT_CLIENT_INFO
 from .grpc import SpannerGrpcTransport
-from google.cloud.spanner_v1.metrics.metrics_interceptor import MetricsInterceptor
 
 
 class SpannerGrpcAsyncIOTransport(SpannerTransport):
