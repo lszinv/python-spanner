@@ -29,11 +29,13 @@ try:
         GoogleCloudResourceDetector,
     )
     import mmh3
+
     HAS_OPENTELEMETRY_INSTALLED = True
 except ImportError:  # pragma: NO COVER
     HAS_OPENTELEMETRY_INSTALLED = False
 
 from .metrics_tracer import MetricsTracer
+from .metrics_gfe_tracer import MetricsGfeTracer
 from google.cloud.spanner_v1 import __version__
 from uuid import uuid4
 
@@ -43,6 +45,7 @@ class SpannerMetricsTracerFactory(MetricsTracerFactory):
 
     _metrics_tracer_factory: "SpannerMetricsTracerFactory" = None
     current_metrics_tracer: MetricsTracer = None
+    metrics_gfe_tracer: MetricsGfeTracer = MetricsGfeTracer()
 
     def __new__(cls, enabled: bool = True) -> "SpannerMetricsTracerFactory":
         """Create a new instance of SpannerMetricsTracerFactory if it doesn't already exist."""

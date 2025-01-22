@@ -183,7 +183,9 @@ class TestTags(MockServerTestBase):
         requests = self.spanner_service.requests
 
         # Filter for SQL requests calls
-        sql_requests = [request for request in requests if isinstance(request, ExecuteSqlRequest)]
+        sql_requests = [
+            request for request in requests if isinstance(request, ExecuteSqlRequest)
+        ]
 
         self.assertTrue(isinstance(sql_requests[0], ExecuteSqlRequest))
         self.assertTrue(isinstance(sql_requests[1], ExecuteSqlRequest))
